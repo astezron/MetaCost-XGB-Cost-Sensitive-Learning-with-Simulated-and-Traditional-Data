@@ -20,6 +20,10 @@ This repository contains Python codes for analyzing simulated and traditional da
   - scikit-learn
   - xgboost
   - scipy
+## CUDA Requirements
+  -NVIDIA GPU with compute capability ≥ 3.5
+  -CUDA Toolkit ≥ 11.2 (Recommended: 11.8 or later for recent XGBoost versions)
+  -NVIDIA drivers compatible with your CUDA version
 
 Install dependencies using:
 ```bash
