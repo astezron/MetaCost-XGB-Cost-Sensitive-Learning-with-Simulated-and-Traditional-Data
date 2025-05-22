@@ -12,8 +12,8 @@ predictors = ['As', 'Au', 'Cu', 'Mo', 'bn_ppm', 'cp_ppm', 'cc_ppm', 'cv_ppm',
 target = 'Alteration'
 
 # Load data
-train_df = pd.read_csv(r"D:\Final_Alteration\Data\Master\train_med.csv")
-test_df = pd.read_csv(r"D:\Final_Alteration\Data\Master\test_med.csv")
+train_df = pd.read_csv("Trad_Train_Demo.csv")
+test_df = pd.read_csv(r"Trad_Test_Demo.csv")
 
 X_train = train_df[predictors]
 X_test = test_df[predictors]
@@ -97,5 +97,5 @@ true_classes = le.inverse_transform(y_test)
 results_df = pd.DataFrame(final_results, columns=["Predicted_Class", "Confidence_Probability"])
 results_df["True_Class"] = true_classes
 
-results_df.to_csv("D:/Final_Alteration/Data/Trad_ppm/bootstrap_prediction_uncertaintyNew.csv", index=False)
+results_df.to_csv("bootstrap_prediction_uncertaintyNew.csv", index=False)
 print(results_df.head())
