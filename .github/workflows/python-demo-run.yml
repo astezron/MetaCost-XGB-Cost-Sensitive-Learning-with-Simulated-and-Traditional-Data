@@ -20,7 +20,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        pip install numpy pandas scikit-learn xgboost scipy
+         pip install numpy pandas scikit-learn xgboost scipy matplotlib
 
     - name: Run XGBMetaCostSim.py
       run: python XGBMetaCostSim.py
