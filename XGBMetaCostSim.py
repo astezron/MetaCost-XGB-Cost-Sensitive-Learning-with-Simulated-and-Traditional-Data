@@ -19,8 +19,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv(r"C:\CopperPrj\Final_OUT\Simulations\SimuTrain50.csv")
-test_df = pd.read_csv(r"C:\CopperPrj\Final_OUT\Simulations\SimuTest50.csv")
+train_df = pd.read_csv(r"C:\CopperPrj\Final_OUT\Simulations\Simu_TrainDemo.csv")
+test_df = pd.read_csv(r"C:\CopperPrj\Final_OUT\Simulations\Simu_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
