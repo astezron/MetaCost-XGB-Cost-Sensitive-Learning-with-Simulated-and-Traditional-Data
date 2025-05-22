@@ -29,6 +29,8 @@ Install dependencies using:
 ```bash
 pip install numpy pandas scikit-learn xgboost scipy
 ```
+## Demo Files Provided:
+For testing purposes, demo dataset files named Simu_TrainDemo.csv and Simu_TestDemo.csv have been included. These can be used to quickly run and verify the workflows.
 
 ## 1. Simulated Dataset Workflow
 
