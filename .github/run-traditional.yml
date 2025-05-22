@@ -1,4 +1,4 @@
-name: Run MetaCost Simulation on Demo Files
+name: Run MetaCost Traditional on Demo Files
 
 on:
   push:
