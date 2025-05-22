@@ -3,7 +3,7 @@ from collections import Counter
 import numpy as np
 
 # Load CSV file
-df= pd.read_csv("D:\Final_Alteration\MetaCost\Simulations\Ass_Min\Misc\MetaCostPredictionsMode.csv")
+df= pd.read_csv("MetaCostPredictionsMode.csv")
 
 # Ensure the dataframe has 'pred' and 'Alteration' columns
 assert 'pred' in df.columns and 'Alteration' in df.columns, "CSV must contain 'pred' and 'Alteration' columns"
@@ -45,7 +45,7 @@ for i in range(n_test_points):
 result_df = pd.DataFrame(results)
 
 # Save result_df to CSV
-output_path = "D:/Final_Alteration/MetaCost/Simulations/Ass_Min/Misc/MetaCost_Frequency_Analysis.csv"
+output_path = "MetaCost_Frequency_Analysis.csv"
 result_df.to_csv(output_path, index=False)
 print(f"Saved output to {output_path}")
 
