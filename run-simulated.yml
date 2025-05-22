@@ -1,0 +1,27 @@
+name: Run Simulated MetaCost
+
+on:
+  push:
+    paths:
+      - XGBMetaCostSim.py
+      - Simu_TrainDemo.csv
+      - Simu_TestDemo.csv
+  workflow_dispatch:
+
+jobs:
+  run-sim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: |
+          pip install numpy pandas matplotlib seaborn xgboost optuna scikit-learn
+
+      - name: Run Simulated MetaCost
+        run: python XGBMetaCostSim.py
