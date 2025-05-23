@@ -4,7 +4,7 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score, cohen_kappa_score
 
 # Set the path for your CSV file
-file_path = "Sample Dataset/MetaCost_PredictionsMode.csv" # Update with your file path
+file_path = "../Sample Dataset/MetaCost_PredictionsMode.csv" # Update with your file path
 
 # Read the CSV file
 data = pd.read_csv(file_path)
@@ -70,6 +70,6 @@ plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
 
 # Save the plot as a PNG file
-plt.savefig("Sample Dataset/MatchCountsPlotMeta.png")  # Save plot as PNG
+plt.savefig("../Sample Dataset/MatchCountsPlotMeta.png")  # Save plot as PNG
 plt.close()  # Close the plot to avoid displaying it in some environments
 
