@@ -4,8 +4,10 @@ on:
   push:
     paths:
       - XGBMetaCostSim.py
-      - Simu_TrainDemo.csv
-      - Simu_TestDemo.csv
+      - SimMode.py
+      - SimModeMetrics.py
+      - Sample Dataset/Simu_TrainDemo.csv
+      - Sample Dataset/Simu_TestDemo.csv
   workflow_dispatch:
 
 jobs:
@@ -26,16 +28,20 @@ jobs:
       - name: Run Simulated MetaCost
         run: python XGBMetaCostSim.py
 
-      - name: Run SimMode.py
+      - name: Run SimMode
         run: python SimMode.py
 
-      - name: Run SimModeMetrics.py
+      - name: Run SimModeMetrics
         run: python SimModeMetrics.py
 
       - name: Upload Predictions Output
         uses: actions/upload-artifact@v4
         with:
           name: meta-cost-outputs
-          path: |
-            MetaCostPredictions.csv
-            MetaCost_PredictionsMode.csv
+          path: Sample Dataset/MetaCostPredictions.csv
+          
+      - name: Upload Mode Predictions Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: meta-cost-mode-outputs
+          path: Sample Dataset/MetaCost_PredictionsMode.csv
