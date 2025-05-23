@@ -235,6 +235,6 @@ plt.tight_layout()
 plt.show()
 
 test_df['pred'] = label_encoder.inverse_transform(y_pred_final)
-test_df.to_csv("MetaCostPredictions.csv", index=False)
+test_df.to_csv("Sample Dataset/MetaCostPredictions.csv", index=False)
 print("\nMetaCost predictions saved.")
 
