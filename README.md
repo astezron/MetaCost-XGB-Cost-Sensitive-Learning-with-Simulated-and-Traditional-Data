@@ -1,4 +1,4 @@
-# MetaCost-XGB: Cost-Sensitive Learning with Simulated and Traditional Data
+# MATLAB-based geostatistical simulations and MetaCost-XGB: Cost-Sensitive Learning with Simulated and Traditional Data
 
 This repository contains a complete workflow for applying the MetaCost algorithm to both simulated and traditional datasets. The pipeline includes MATLAB-based geostatistical simulations, Python-based machine learning, and GitHub Actions automation.
 
@@ -57,6 +57,12 @@ A demo dataset – 10% sample of the original dataset – is provided in `Sample
 - The pipeline runs end-to-end: training, predicting, aggregating results, and evaluating metrics, simulating the full workflow on smaller data.
 - GitHub Actions automation runs this demo pipeline every time the key files are updated.
 - Workflow YAML: [.github/workflows/run-simulated.yml](.github/workflows/run-simulated.yml)
+
+**Expected run time on a normal desktop:**
+
+- Traditional Demo: ~1 minute
+
+- Simulated Demo: ~20 minutes
 
 ---
 
