@@ -7,7 +7,7 @@ This repository contains a complete workflow for applying the MetaCost algorithm
 ## Repository Structure
 
 ```bash
-MetaCost-XGB-Cost-Sensitive-Learning-with-Simulated-and-Traditional-Data/
+MATLAB-based geostatistical simulations and MetaCost-XGB-Cost-Sensitive-Learning-with-Simulated-and-Traditional-Data/
 │
 ├── .github/workflows/         # GitHub Actions workflow files
 │   └── run-simulated.yml      # Defines CI for running the pipeline on demo datasets
