@@ -38,12 +38,10 @@ This project is built on a **two-phase workflow**:
 - Generates synthetic proxy datasets based on geostatistical simulation.
 - Produces `proxies_training.csv` and `proxies_alldata.csv`.
 - See [Matlab Codes/README_Matlab.md](Matlab%20Codes/README_Matlab.md) for detailed steps.
+  
 
 ### 2. **Python Phase**
 - Applies cost-sensitive XGBoost classification using the MetaCost algorithm.
-- Outputs:
-  - `MetaCostPredictions.csv`: Predictions from each simulation
-  - `MetaCost_PredictionsMode.csv`: Aggregated mode-based classification
 - See [Python Codes/README_Python.md](Python%20Codes/README_Python.md) for detailed steps.
 
 ---
