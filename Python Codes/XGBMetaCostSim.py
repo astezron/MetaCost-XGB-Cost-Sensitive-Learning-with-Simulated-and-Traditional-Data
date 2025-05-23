@@ -5,6 +5,7 @@ import seaborn as sns
 import xgboost as xgb
 import optuna
 import warnings
+import os
 
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.metrics import (
@@ -235,6 +236,9 @@ plt.tight_layout()
 plt.show()
 
 test_df['pred'] = label_encoder.inverse_transform(y_pred_final)
+print(f"Saving predictions to: {output_path}")
 test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
+# Confirm the file exists
+print("Does file exist?", os.path.exists(output_path))
 print("\nMetaCost predictions saved.")
 
