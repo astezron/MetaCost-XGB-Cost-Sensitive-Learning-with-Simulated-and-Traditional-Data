@@ -1,0 +1,13 @@
+                  Parameters for GAMV
+                  *******************
+
+START OF PARAMETERS:
+nscore_training.out                             % file with data
+1 2 3                                           %        columns for coordinates
+20:34                                           %        columns for data values
+Cu Au Mo As Bn Cp Cc Cv En Py Pyr Mol Ga Sph TS %        variable names
+-10.0 10.0                                      %        trimming limits
+2                                               % number of directions
+0.0  90.0  0.0  20.0  15.0  20  7.5             %      direction 1: azm,atol,dip,dtol,lag,nlag,lagtol
+0.0  90.0 90.0  20.0  10.0  20  5.0             %      direction 2: azm,atol,dip,dtol,lag,nlag,lagtol
+gamv                                            % basename for output file

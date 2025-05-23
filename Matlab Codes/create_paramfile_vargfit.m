@@ -1,0 +1,55 @@
+function create_paramfile_vargfit
+
+%----------------------------------------------------
+% Create a default parameter file for program vargfit
+%----------------------------------------------------
+%
+% Author: Xavier Emery
+
+fid = fopen('vargfit.par','w');
+
+fprintf(fid,'%1s\n','                  Parameters for VARGFIT');
+fprintf(fid,'%1s\n','                  **********************');
+fprintf(fid,'%1s\n',' ');
+fprintf(fid,'%1s\n','START OF PARAMETERS:');
+fprintf(fid,'%1s\n','gamv_variogram.out               % file with experimental variograms/covariances');
+fprintf(fid,'%1s\n','29                               % number of nested structures');
+fprintf(fid,'%1s\n','2  25  25  25 0 0 0              %        1st structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  25  25  50 0 0 0              %        2nd structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  25  25 100 0 0 0              %        3rd structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  25  25 150 0 0 0              %        4th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  25  25 250 0 0 0              %        5th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  25  25 1e5 0 0 0              %        6th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  50  50  25 0 0 0              %        7th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  50  50  50 0 0 0              %        8th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  50  50 100 0 0 0              %        9th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  50  50 150 0 0 0              %       10th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  50  50 250 0 0 0              %       11th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2  50  50 1e5 0 0 0              %       12th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 100 100  25 0 0 0              %       13th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 100 100  50 0 0 0              %       14th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 100 100 100 0 0 0              %       15th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 100 100 150 0 0 0              %       16th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 100 100 250 0 0 0              %       17th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 100 100 1e5 0 0 0              %       18th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 150 150  25 0 0 0              %       19th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 150 150  50 0 0 0              %       20th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 150 150 100 0 0 0              %       21th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 150 150 150 0 0 0              %       22th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 150 150 250 0 0 0              %       23th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 150 150 1e5 0 0 0              %       24th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 250 250  25 0 0 0              %       25th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 250 250  50 0 0 0              %       26th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 250 250 100 0 0 0              %       27th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 250 250 150 0 0 0              %       28th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','2 250 250 250 0 0 0              %       29th structure: it a1 a2 a3 ang1 ang2 ang3');
+fprintf(fid,'%1s\n','1                                % consider a nugget effect for fitting? 1=yes, 0=no');
+fprintf(fid,'%1s\n','3                                % weighting option: 0=none; 1=proportional to nb of pairs; 2=inv. proportional to lag; 3=both');
+fprintf(fid,'%1s\n','vargfit                          % basename for output files');
+fprintf(fid,'%1s\n','Cu Au Mo As Bn Cp Cc Cv En Py Pyr Mol Ga Sph TS  % variable names');
+fprintf(fid,'%1s\n',' ');
+fprintf(fid,'%1s\n','Available model types:');
+fprintf(fid,'%1s\n','        1: spherical');
+fprintf(fid,'%1s\n','        2: exponential');
+
+fclose(fid);
