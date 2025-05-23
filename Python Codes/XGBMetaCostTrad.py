@@ -19,8 +19,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv(r"Trad_TrainDemo.csv")
-test_df = pd.read_csv(r"Trad_TestDemo.csv")
+train_df = pd.read_csv("Sample Dataset/Trad_TrainDemo.csv")
+test_df = pd.read_csv("Sample/Dataset/Trad_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
