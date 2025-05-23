@@ -49,4 +49,4 @@ This script will automatically read the input files and generate simulated proxi
 ## Requirements
 
 - MATLAB (no specific version required, but recent versions recommended)
-- CSV input files in the correct fo
+- CSV input files in the correct format.
