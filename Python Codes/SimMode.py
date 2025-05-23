@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Set the path for your CSV file
-file_path = "MetaCost_Predictions.csv"
+file_path = "Sample Dataset/MetaCost_Predictions.csv"
 # Read the CSV file
 data = pd.read_csv(file_path)
 
@@ -27,7 +27,7 @@ for i in range(0, len(data), 50):
     data.loc[i, 'ModePred'] = mode_value
 
 # Save the updated DataFrame back to a new CSV file
-output_file_path = "MetaCost_PredictionsMode.csv" # Path for the updated file
+output_file_path = "Sample Dataset/MetaCost_PredictionsMode.csv" # Path for the updated file
 data.to_csv(output_file_path, index=False)
 
 # Prepare data for plotting
@@ -50,5 +50,5 @@ plt.grid(True, linestyle='--', alpha=0.7)
 plt.tight_layout()
 
 # Save the plot as a PNG file
-plt.savefig(r"F:\Final_OUT\Simulations\MetaCost_PredictionsMode.jpg")  # Save plot as PNG
+plt.savefig("Sample Dataset\MetaCost_PredictionsMode.jpg")  # Save plot as PNG
 plt.close()  # Close the plot to avoid displaying it in some environments
