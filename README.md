@@ -50,7 +50,11 @@ This project is built on a **two-phase workflow**:
 
 ## Demo & Automation
 
-- A demo dataset - 10 percent Samples of the original dataset : (`Simu_TrainDemo.csv` and `Simu_TestDemo.csv` for Simulated Dataset and 'Trad_TrainDemo.csv' and 'Trad_TestDemo.csv' for Traditional Dataset) is provided in `Sample Dataset/`.
+A demo dataset – 10% sample of the original dataset – is provided in `Sample Dataset/`:
+  - `Simu_TrainDemo.csv` and `Simu_TestDemo.csv` for the **Simulated Dataset**
+  - `Trad_TrainDemo.csv` and `Trad_TestDemo.csv` for the **Traditional Dataset**
+- This demo is designed to test the **MetaCost XGBoost algorithm** on both traditional and simulated datasets.
+- The pipeline runs end-to-end: training, predicting, aggregating results, and evaluating metrics, simulating the full workflow on smaller data.
 - GitHub Actions automation runs this demo pipeline every time the key files are updated.
 - Workflow YAML: [.github/workflows/run-simulated.yml](.github/workflows/run-simulated.yml)
 
