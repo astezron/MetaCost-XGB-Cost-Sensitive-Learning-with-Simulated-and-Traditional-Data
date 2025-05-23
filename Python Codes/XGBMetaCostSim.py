@@ -19,8 +19,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv("Sample Dataset/Simu_TrainDemo.csv")
-test_df = pd.read_csv("Sample Dataset/Simu_TestDemo.csv")
+train_df = pd.read_csv("../Sample Dataset/Simu_TrainDemo.csv")
+test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
@@ -235,6 +235,6 @@ plt.tight_layout()
 plt.show()
 
 test_df['pred'] = label_encoder.inverse_transform(y_pred_final)
-test_df.to_csv("Sample Dataset/MetaCostPredictions.csv", index=False)
+test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
 print("\nMetaCost predictions saved.")
 
