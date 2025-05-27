@@ -60,7 +60,7 @@ A demo dataset – 10% sample of the original dataset – is provided in `Sample
 
 - Traditional Demo: ~1 minute
 
-- Simulated Demo: ~20 minutes
+- Simulated Demo: ~7 minutes
 
 ---
 
