@@ -13,8 +13,7 @@ from sklearn.metrics import (
 )
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
-
-warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
+from sklearn.calibration import CalibratedClassifierCV
 
 # ================================
 # 1. Load Dataset
@@ -54,29 +53,28 @@ cost_matrix = np.array([
     [6, 5, 0, 6, 4, 9],
     [7, 7, 7, 0, 6, 5],
     [8, 11, 7, 6, 0, 3],
-    [14, 12, 10, 5, 3, 0]
-], dtype=float)
+    [14, 12, 10, 5, 3, 0]], dtype=float)
 
-cost_matrix[4, :] *= 1.5
-cost_matrix[:, 4] *= 1.5
-cost_matrix[5, :] *= 1.5
-cost_matrix[:, 5] *= 1.5
-normalized_cost_matrix = cost_matrix / np.max(cost_matrix)
+cost_matrix[4, :] *= 2.0
+cost_matrix[:, 4] *= 2.0
+cost_matrix[5, :] *= 2.0
+cost_matrix[:, 5] *= 2.0
+
+working_cost_matrix = cost_matrix.copy()
 
 # ================================
 # 6. Bayesian Optimization (Optuna)
 # ================================
-print("Starting Bayesian optimization using Optuna...")
+print("\nStarting Bayesian optimization using Optuna...")
 
 def objective(trial):
     params = {
-        'device': 'cuda',
-        'tree_method': 'hist',
+        'tree_method': 'hist',  
         'eval_metric': 'mlogloss',
         'random_state': 42,
         'max_depth': trial.suggest_categorical('max_depth', [8, 9, 10]),
         'learning_rate': trial.suggest_categorical('learning_rate', [0.05, 0.07]),
-        'n_estimators': trial.suggest_categorical('n_estimators', [800, 1000]),
+        'n_estimators': trial.suggest_categorical('n_estimators', [800, 1500]),
         'subsample': trial.suggest_categorical('subsample', [0.9, 1.0]),
         'colsample_bytree': trial.suggest_categorical('colsample_bytree', [0.8, 0.9]),
         'gamma': trial.suggest_categorical('gamma', [0.1, 0.2]),
@@ -106,13 +104,12 @@ study.optimize(objective, n_trials=5, show_progress_bar=True)
 
 best_params_tuned = study.best_params
 best_params_tuned.update({
-    'device': 'cuda',
-    'tree_method': 'hist',
+    'tree_method': 'hist',  
     'eval_metric': 'mlogloss',
     'random_state': 42
 })
 
-print("Best parameters found:")
+print("\nBest parameters found:")
 for k, v in best_params_tuned.items():
     print(f"{k}: {v}")
 
@@ -120,7 +117,7 @@ for k, v in best_params_tuned.items():
 # 7. MetaCost Class
 # ================================
 class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
-    def __init__(self, base_classifier=None, confidence_threshold=0.70, min_cost_reduction=0.02, cv_splits=10, random_state=None):
+    def __init__(self, base_classifier=None, confidence_threshold=0.30, min_cost_reduction=0.001, cv_splits=5, random_state=None):
         self.base_classifier = base_classifier if base_classifier is not None else xgb.XGBClassifier(**best_params_tuned)
         self.confidence_threshold = confidence_threshold
         self.min_cost_reduction = min_cost_reduction
@@ -138,13 +135,16 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
             classifiers.append(clf)
 
         prob_matrix = np.mean([clf.predict_proba(X) for clf in classifiers], axis=0)
-        expected_costs = np.dot(prob_matrix, normalized_cost_matrix)
+        expected_costs = np.dot(prob_matrix, working_cost_matrix)
         new_labels = np.argmin(expected_costs, axis=1)
 
         original_costs = expected_costs[np.arange(len(y)), y]
         new_costs = expected_costs[np.arange(len(y)), new_labels]
-        cost_reduction = (original_costs - new_costs) / (original_costs + 1e-6)
+        cost_reduction = original_costs - new_costs  # Absolute cost reduction
         confidence = np.max(prob_matrix, axis=1)
+        
+        print(f"Confidence stats: Min={np.min(confidence):.2f}, Mean={np.mean(confidence):.2f}, Max={np.max(confidence):.2f}")
+        print(f"Cost reduction stats: Min={np.min(cost_reduction):.4f}, Mean={np.mean(cost_reduction):.4f}, Max={np.max(cost_reduction):.4f}")
 
         relabel_mask = (cost_reduction > self.min_cost_reduction) & (confidence > self.confidence_threshold)
         y_transformed = np.where(relabel_mask, new_labels, y)
@@ -154,8 +154,8 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
         self.relabelled_labels_ = y_transformed
 
         num_relabels = np.sum(relabel_mask)
-        print(f"MetaCost re-labeled {num_relabels} instances out of {len(y)} ({100 * num_relabels / len(y):.2f}%)")
-        print(f"Avg training cost reduced: {np.mean(original_costs):.4f} → {np.mean(expected_costs[np.arange(len(y)), y_transformed]):.4f}")
+        print(f"\nMetaCost re-labeled {num_relabels} instances out of {len(y)} ({100 * num_relabels / len(y):.2f}%)")
+        print(f"Avg training cost reduced: {np.mean(original_costs):.4f} -> {np.mean(expected_costs[np.arange(len(y)), y_transformed]):.4f}")
 
         final_weights = [class_weights[label] for label in y_transformed]
         self.final_classifier_ = clone(self.base_classifier).fit(X, y_transformed, sample_weight=final_weights)
@@ -163,60 +163,46 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
 
     def predict(self, X):
         return self.final_classifier_.predict(X)
-
+    
     def predict_proba(self, X):
         return self.final_classifier_.predict_proba(X)
 
 # ================================
-# 8. Train Baseline Model
+# 8. Train MetaCost with Calibration
 # ================================
-print("Training Baseline XGBoost...")
-baseline_model = xgb.XGBClassifier(**best_params_tuned)
-baseline_model.fit(X_train, y_train)
-y_pred_baseline = baseline_model.predict(X_test)
+print("\nCreating calibrated base classifier...")
+calibrated_base = CalibratedClassifierCV(
+    xgb.XGBClassifier(**best_params_tuned),
+    method='isotonic',
+    cv=3,
+    n_jobs=-1
+)
 
-print("Baseline XGBoost Performance:")
-print("Accuracy:", accuracy_score(y_test, y_pred_baseline))
-print("Recall:", recall_score(y_test, y_pred_baseline, average='weighted'))
-print("F1 Score:", f1_score(y_test, y_pred_baseline, average='weighted'))
-print("Precision:", precision_score(y_test, y_pred_baseline, average='weighted'))
-print("Kappa:", cohen_kappa_score(y_test, y_pred_baseline))
-print("ROC-AUC:", roc_auc_score(y_test, baseline_model.predict_proba(X_test), multi_class='ovr'))
-
-# ================================
-# 9. Train MetaCost 
-# ================================
-meta_model = OptimizedMetaCost(random_state=42)
+print("\nTraining MetaCost...")
+meta_model = OptimizedMetaCost(
+    base_classifier=calibrated_base,
+    confidence_threshold=0.30,
+    min_cost_reduction=0.5,
+    cv_splits=5,
+    random_state=42
+)
 meta_model.fit(X_train, y_train)
 
 meta_probs = meta_model.predict_proba(X_test)
 meta_pred = meta_model.predict(X_test)
-meta_conf = np.max(meta_probs, axis=1)
-expected_cost_meta = np.dot(meta_probs, normalized_cost_matrix)[np.arange(len(y_test)), meta_pred]
-expected_cost_base = np.dot(meta_probs, normalized_cost_matrix)[np.arange(len(y_test)), y_pred_baseline]
 
-override_mask = (meta_pred != y_pred_baseline) & (meta_conf > 0.75) & ((expected_cost_base - expected_cost_meta) > 0.01)
-y_pred_final = np.where(override_mask, meta_pred, y_pred_baseline)
-
-print("First 5 relabeled samples:")
-relabel_indices = np.where(meta_model.relabel_mask_)[0]
-for idx in relabel_indices[:5]:
-    orig = label_encoder.inverse_transform([meta_model.original_labels_[idx]])[0]
-    new = label_encoder.inverse_transform([meta_model.relabelled_labels_[idx]])[0]
-    print(f"Index {idx}: {orig} → {new}")
-
-print("MetaCost Final Performance:")
-print("Accuracy:", accuracy_score(y_test, y_pred_final))
-print("Recall:", recall_score(y_test, y_pred_final, average='weighted'))
-print("F1 Score:", f1_score(y_test, y_pred_final, average='weighted'))
-print("Precision:", precision_score(y_test, y_pred_final, average='weighted'))
-print("Kappa:", cohen_kappa_score(y_test, y_pred_final))
+print("\nMetaCost Performance:")
+print("Accuracy:", accuracy_score(y_test, meta_pred))
+print("Recall:", recall_score(y_test, meta_pred, average='weighted'))
+print("F1 Score:", f1_score(y_test, meta_pred, average='weighted'))
+print("Precision:", precision_score(y_test, meta_pred, average='weighted'))
+print("Kappa:", cohen_kappa_score(y_test, meta_pred))
 print("ROC-AUC:", roc_auc_score(y_test, meta_probs, multi_class='ovr'))
 
 # ================================
-# 10. Visualizations & Save
+# 9. Visualizations & Save
 # ================================
-conf_matrix = confusion_matrix(y_test, y_pred_final)
+conf_matrix = confusion_matrix(y_test, meta_pred)
 plt.figure(figsize=(10, 7))
 sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues',
             xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_)
@@ -226,41 +212,47 @@ plt.ylabel('Actual')
 plt.tight_layout()
 plt.show()
 
-feature_importance = meta_model.final_classifier_.feature_importances_
-plt.figure(figsize=(10, 7))
-plt.barh(predictors, feature_importance)
-plt.title('Feature Importances - MetaCost XGBoost')
-plt.xlabel('Importance')
-plt.ylabel('Feature')
-plt.tight_layout()
-plt.show()
+try:
+    xgb_model = xgb.XGBClassifier(**best_params_tuned)
+    xgb_model.fit(X_train, y_train)
+    
+    feature_importance = xgb_model.feature_importances_
+    
+    plt.figure(figsize=(10, 7))
+    plt.barh(predictors, feature_importance)
+    plt.title('Feature Importances - XGBoost Model')
+    plt.xlabel('Importance')
+    plt.ylabel('Feature')
+    plt.tight_layout()
+    plt.show()
+except Exception as e:
+    print(f"\nCould not plot feature importances: {str(e)}")
 
-# =====================================
-# Print results
+# 10. Print results
 # =====================================
 print("\n=== Evaluation Metrics ===")
-cm = confusion_matrix(y_test, y_pred_final)
-accuracy = accuracy_score(y_test, y_pred_final) * 100  # in percentage
+cm = confusion_matrix(y_test, meta_pred)
+accuracy = accuracy_score(y_test, meta_pred) * 100  # in percentage
 error_rate = 100 - accuracy
 roc_auc = roc_auc_score(y_test, meta_probs, multi_class='ovr')
 from sklearn.metrics import average_precision_score
 from sklearn.preprocessing import label_binarize
 y_test_binarized = label_binarize(y_test, classes=np.arange(len(label_encoder.classes_)))
 prc_auc = average_precision_score(y_test_binarized, meta_probs, average="macro")
-kappa = cohen_kappa_score(y_test, y_pred_final)
+kappa = cohen_kappa_score(y_test, meta_pred)
 
 print(f"Correct: {cm.trace()}")
 print(f"Total: {cm.sum()}")
-print(f"Accuracy: {accuracy / 100:.2f}")
-print(f"Error Rate: {error_rate / 100:.2f}")
+print(f"Accuracy: {accuracy:.2f}%")
+print(f"Error Rate: {error_rate:.2f}%")
 print(f"ROC Area: {roc_auc:.2f}")
 print(f"PRC Area: {prc_auc:.2f}")
 print(f"Cohen's Kappa: {kappa:.2f}")
 
 # Print class-wise metrics
-precision_vals = precision_score(y_test, y_pred_final, average=None)
-recall_vals = recall_score(y_test, y_pred_final, average=None)
-f_measure_vals = f1_score(y_test, y_pred_final, average=None)
+precision_vals = precision_score(y_test, meta_pred, average=None)
+recall_vals = recall_score(y_test, meta_pred, average=None)
+f_measure_vals = f1_score(y_test, meta_pred, average=None)
 specificity_vals = []
 for i in range(len(label_encoder.classes_)):
     TP = cm[i, i]
@@ -275,9 +267,9 @@ for i, label in enumerate(class_labels):
     print(f"Class {label}: Precision: {precision_vals[i]:.6f}, Recall: {recall_vals[i]:.6f}, F-Measure: {f_measure_vals[i]:.6f}, Specificity: {specificity_vals[i]:.6f}")
 
 # Display overall metrics
-overall_precision = precision_score(y_test, y_pred_final, average="macro")
-overall_recall = recall_score(y_test, y_pred_final, average="macro")
-overall_f_measure = f1_score(y_test, y_pred_final, average="macro")
+overall_precision = precision_score(y_test, meta_pred, average="macro")
+overall_recall = recall_score(y_test, meta_pred, average="macro")
+overall_f_measure = f1_score(y_test, meta_pred, average="macro")
 overall_specificity = np.mean(specificity_vals)
 overall_sensitivity = overall_recall
 
