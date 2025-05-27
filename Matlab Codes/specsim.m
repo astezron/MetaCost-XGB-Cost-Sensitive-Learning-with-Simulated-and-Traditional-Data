@@ -1,4 +1,4 @@
-function specsim
+function specsim(paramfile)
 
 %-------------------------------------------------------------------------------------
 % Spectral simulation of cross-correlated Gaussian random fields with nugget filtering
@@ -214,18 +214,15 @@ for i = 1:nst
   sill(:,:,i) = reshape(cc(i,:),nvar,nvar);
   R = setrot(model,i);
   model_rotationmatrix(:,:,i) = R;
-  if max(abs(sill(:,:,i)-sill(:,:,i)'))>100*eps, error(['The sill matrix for structure nº',num2str(i),' is not symmetric']); end
   [eigenvectors,eigenvalues] = eig(sill(:,:,i));
   eigenvalues = max(0,eigenvalues);
   sill(:,:,i) = eigenvectors*eigenvalues*eigenvectors';
-  if min(diag(eigenvalues))<0, error(['The sill matrix for structure nº',num2str(i),' is not positive semi-definite']); end
 end
 
 sillnugget = reshape(nugget,nvar,nvar);
-if max(abs(sillnugget-sillnugget'))>100*eps, error(['The sill matrix for the nugget effect is not symmetric']); end
 [eigenvectors,eigenvalues] = eig(sillnugget);
+eigenvalues = max(0,eigenvalues);
 A0 = sqrt(eigenvalues)*eigenvectors';
-if min(diag(eigenvalues))<0, error(['The sill matrix for the nugget effect is not positive semi-definite']); end
 max_nugget = max(abs(nugget));
 
 
