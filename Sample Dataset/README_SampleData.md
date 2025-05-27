@@ -8,7 +8,7 @@ This repository contains sample datasets used for modeling and testing classific
 The **traditional sample data** was derived from the original isotopic dataset `alldata.csv` (which contains no missing values). From this dataset:
 
 - A 10% random sample was extracted.
-- This sample was then split into:
+- This sample was then split (70:30) into:
   - `Trad_TrainDemo.csv` – Training dataset
   - `Trad_TestDemo.csv` – Testing dataset
 
@@ -19,7 +19,7 @@ To enhance the dataset and test model performance on generated proxy features, *
 
 1. Starting from `alldata.csv`, simulations were performed using custom MATLAB codes.
 2. These simulations produced a new dataset: `proxies_alldata.csv`, containing proxy variables for geochemical indicators.
-3. This was again split into:
+3. This was again split (70:30) into:
    - `Simu_TrainDemo.csv` – Training dataset with proxies
    - `Simu_TestDemo.csv` – Testing dataset with proxies
 
