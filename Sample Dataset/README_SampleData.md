@@ -6,7 +6,7 @@ This repository contains curated datasets designed for modeling and testing clas
 
 ## 📁 Dataset Structure
 
-### 🔹 Traditional Sample Data
+###  Traditional Sample Data
 
 The **traditional datasets** are derived from the original, complete geochemical dataset `alldata.csv` (no missing values). The processing steps were as follows:
 
@@ -19,7 +19,7 @@ These datasets contain the **original geochemical features** and serve as a base
 
 ---
 
-### 🔹 Simulated Sample Data
+###  Simulated Sample Data
 
 To test model generalization and performance on synthetic feature inputs, **simulated datasets** were created:
 
@@ -33,6 +33,8 @@ Final processed files after decoding Alteration:
 
 - `Simu_TrainDemo.csv` – Simulated training set
 - `Simu_TestDemo.csv` – Simulated testing set
+
+**Note: Values are in Gaussian scale, representing the distribution across multiple geostatistical realizations, so values may be negative.**
 
 ---
 
