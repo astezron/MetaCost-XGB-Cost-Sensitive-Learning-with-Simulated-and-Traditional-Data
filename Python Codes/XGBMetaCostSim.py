@@ -167,9 +167,6 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
     def predict_proba(self, X):
         return self.final_classifier_.predict_proba(X)
 
-print(f"Confidence stats: Min={np.min(confidence):.2f}, Mean={np.mean(confidence):.2f}, Max={np.max(confidence):.2f}")
-print(f"Cost reduction stats: Min={np.min(cost_reduction):.4f}, Mean={np.mean(cost_reduction):.4f}, Max={np.max(cost_reduction):.4f}")
-
 # ================================
 # 8. Train Baseline Model
 # ================================
@@ -215,6 +212,9 @@ print("F1 Score:", f1_score(y_test, y_pred_final, average='weighted'))
 print("Precision:", precision_score(y_test, y_pred_final, average='weighted'))
 print("Kappa:", cohen_kappa_score(y_test, y_pred_final))
 print("ROC-AUC:", roc_auc_score(y_test, meta_probs, multi_class='ovr'))
+
+print(f"Confidence stats: Min={np.min(confidence):.2f}, Mean={np.mean(confidence):.2f}, Max={np.max(confidence):.2f}")
+print(f"Cost reduction stats: Min={np.min(cost_reduction):.4f}, Mean={np.mean(cost_reduction):.4f}, Max={np.max(cost_reduction):.4f}")
 
 # ================================
 # 10. Visualizations & Save
