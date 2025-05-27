@@ -1,43 +1,57 @@
-# Sample Dataset Information
+# 📂 Sample Dataset Documentation
 
-This repository contains sample datasets used for modeling and testing classification algorithms for alteration type prediction based on geochemical and simulated proxy data.
-
-## 📁 Dataset Overview
-
-### Traditional Sample Data
-The **traditional sample data** was derived from the original isotopic dataset `alldata.csv` (which contains no missing values). From this dataset:
-
-- A 10% random sample was extracted.
-- This sample was then split (70:30) into:
-  - `Trad_TrainDemo.csv` – Training dataset
-  - `Trad_TestDemo.csv` – Testing dataset
-
-These files represent the "traditional" form of the data, using original geochemical features.
-
-### Simulated Sample Data
-To enhance the dataset and test model performance on generated proxy features, **simulated data** was created:
-
-1. Starting from `alldata.csv`, simulations were performed using custom MATLAB codes.
-2. These simulations produced a new dataset: `proxies_alldata.csv`, containing proxy variables for geochemical indicators.
-3. This was again split (70:30) into:
-   - `Simu_TrainDemo.csv` – Training dataset with proxies
-   - `Simu_TestDemo.csv` – Testing dataset with proxies
-
-## 🧠 Alteration Code Transformation
-
-In the MATLAB-generated files, the `Alteration` field was **initially encoded as integers**:
-
-| Code | Class |
-|------|--------|
-| 1    | AAA    |
-| 2    | IAA    |
-| 3    | PHY    |
-| 4    | PRO    |
-| 5    | PTS    |
-| 6    | UAL    |
-
-Before using these files in Python-based machine learning pipelines, the integer codes were **decoded back to their original categorical labels** to ensure consistency with the traditional dataset and proper label interpretation in classification tasks.
+This repository contains curated datasets designed for modeling and testing classification algorithms that predict **alteration types** based on geochemical and proxy variables.
 
 ---
 
-**Note:** All datasets are in `.csv` format and are stored locally for offline experimentation and analysis.
+## 📁 Dataset Structure
+
+### 🔹 Traditional Sample Data
+
+The **traditional datasets** are derived from the original, complete geochemical dataset `alldata.csv` (no missing values). The processing steps were as follows:
+
+- A **10% random sample** was extracted from `alldata.csv`.
+- This sample was split into:
+  - `Trad_TrainDemo.csv` – Training set (70%)
+  - `Trad_TestDemo.csv` – Testing set (30%)
+
+These datasets contain the **original geochemical features** and serve as a baseline for evaluating model performance.
+
+---
+
+### 🔹 Simulated Sample Data
+
+To test model generalization and performance on synthetic feature inputs, **simulated datasets** were created:
+
+1. Starting from `alldata.csv` and `training.csv`, **proxy variables** were generated using custom MATLAB scripts.
+2. These simulations produced:
+   - `proxies_alldata.csv` – Full dataset with proxy features.
+   - `proxies_training.csv` – Training portion with proxy features.
+3. The test dataset was created by substracting the training portion from the full dataset.
+
+Final processed files after decoding Alteration:
+
+- `Simu_TrainDemo.csv` – Simulated training set
+- `Simu_TestDemo.csv` – Simulated testing set
+
+---
+
+## 🔁 Alteration Code Conversion
+
+In the MATLAB-generated simulated datasets, the `Alteration` class labels were initially **encoded as integers**:
+
+| Code | Label |
+|------|-------|
+| 1    | AAA   |
+| 2    | IAA   |
+| 3    | PHY   |
+| 4    | PRO   |
+| 5    | PTS   |
+| 6    | UAL   |
+
+These were **decoded back to their original categorical labels** in the final `.csv` files to ensure consistency with the traditional datasets and compatibility with Python-based classification models.
+
+---
+
+> ✅ For optimal model training and evaluation, ensure consistent label encoding across both traditional and simulated datasets.
+
