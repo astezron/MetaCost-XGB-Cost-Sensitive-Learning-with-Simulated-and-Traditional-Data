@@ -120,7 +120,7 @@ for k, v in best_params_tuned.items():
 # 7. MetaCost Class
 # ================================
 class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
-    def __init__(self, base_classifier=None, confidence_threshold=0.30, min_cost_reduction=0.01, cv_splits=10, random_state=None):
+    def __init__(self, base_classifier=None, confidence_threshold=0.55, min_cost_reduction=0.005, cv_splits=10, random_state=None):
         self.base_classifier = base_classifier if base_classifier is not None else xgb.XGBClassifier(**best_params_tuned)
         self.confidence_threshold = confidence_threshold
         self.min_cost_reduction = min_cost_reduction
@@ -166,6 +166,9 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
     
     def predict_proba(self, X):
         return self.final_classifier_.predict_proba(X)
+
+print(f"Confidence stats: Min={np.min(confidence):.2f}, Mean={np.mean(confidence):.2f}, Max={np.max(confidence):.2f}")
+print(f"Cost reduction stats: Min={np.min(cost_reduction):.4f}, Mean={np.mean(cost_reduction):.4f}, Max={np.max(cost_reduction):.4f}")
 
 # ================================
 # 8. Train Baseline Model
