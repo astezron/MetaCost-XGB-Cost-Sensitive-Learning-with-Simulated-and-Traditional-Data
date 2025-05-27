@@ -15,9 +15,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
 from sklearn.calibration import CalibratedClassifierCV
 
-# Suppress XGBoost GPU warning
-warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
-
 # ================================
 # 1. Load Dataset
 # ================================
@@ -58,13 +55,11 @@ cost_matrix = np.array([
     [8, 11, 7, 6, 0, 3],
     [14, 12, 10, 5, 3, 0]], dtype=float)
 
-# Make cost matrix more aggressive
 cost_matrix[4, :] *= 2.0
 cost_matrix[:, 4] *= 2.0
 cost_matrix[5, :] *= 2.0
 cost_matrix[:, 5] *= 2.0
 
-# Use original cost matrix (not normalized)
 working_cost_matrix = cost_matrix.copy()
 
 # ================================
@@ -218,7 +213,9 @@ plt.tight_layout()
 plt.show()
 
 try:
-    xgb_model = meta_model.final_classifier_.estimators_[0]
+    xgb_model = xgb.XGBClassifier(**best_params_tuned)
+    xgb_model.fit(X_train, y_train)
+    
     feature_importance = xgb_model.feature_importances_
     
     plt.figure(figsize=(10, 7))
@@ -230,7 +227,6 @@ try:
     plt.show()
 except Exception as e:
     print(f"\nCould not plot feature importances: {str(e)}")
-
 
 test_df['pred'] = label_encoder.inverse_transform(meta_pred)
 test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
