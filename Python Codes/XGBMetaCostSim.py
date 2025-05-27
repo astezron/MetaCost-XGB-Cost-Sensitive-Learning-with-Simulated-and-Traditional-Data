@@ -1,47 +1,3 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import xgboost as xgb
-import optuna
-import warnings
-import os
-
-from sklearn.base import BaseEstimator, ClassifierMixin, clone
-from sklearn.metrics import (
-    accuracy_score, precision_score, recall_score, f1_score,
-    confusion_matrix, cohen_kappa_score, roc_auc_score
-)
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import StratifiedKFold
-
-warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
-
-# ================================
-# 1. Load Dataset
-# ================================
-train_df = pd.read_csv("../Sample Dataset/Simu_TrainDemo.csv")
-test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
-
-# ================================
-# 2. Predictors & Target
-# ================================
-predictors = ['Cu', 'Au', 'Mo'	, 'As',	'Bn', 'Cp', 'Cc', 'Cv', 'En', 'Py', 'Pyr', 'Mol', 'Ga', 'Sph', 'TS' ]
-target = 'Alteration'
-
-# ================================
-# 3. Encode Target
-# ================================
-label_encoder = LabelEncoder()
-y_train = label_encoder.fit_transform(train_df[target])
-y_test = label_encoder.transform(test_df[target])
-
-X_train = train_df[predictors].astype(np.float32).values
-X_test = test_df[predictors].astype(np.float32).values
-
-# ================================
-# 4. Class Weights
-# ================================import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -63,8 +19,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Sample Matlab\Deco\Demo\Simu_TrainDemo.csv")
-test_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Sample Matlab\Deco\Demo\Simu_TestDemo.csv")
+train_df = pd.read_csv("../Sample Dataset/Simu_TrainDemo.csv")
+test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
