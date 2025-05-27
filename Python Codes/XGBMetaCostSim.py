@@ -26,7 +26,7 @@ test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
 # ================================
 # 2. Predictors & Target
 # ================================
-predictors = ['As', 'Au', 'Cu', 'Mo', 'bn', 'cp', 'cc', 'cv', 'en', 'py', 'po', 'mo', 'ga', 'sl', 'TS_ppm']
+predictors = ['Cu', 'Au', 'Mo'	, 'As',	'Bn', 'Cp', 'Cc', 'Cv', 'En', 'Py', 'Pyr', 'Mol', 'Ga', 'Sph', 'TS' ]
 target = 'Alteration'
 
 # ================================
