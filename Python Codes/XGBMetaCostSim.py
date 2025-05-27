@@ -218,24 +218,19 @@ plt.tight_layout()
 plt.show()
 
 try:
-    if hasattr(meta_model.final_classifier_, 'estimator')
-        base_xgb_model = meta_model.final_classifier_.estimator
-    elif hasattr(meta_model.final_classifier_, 'calibrated_classifiers_'):
-        base_xgb_model = meta_model.final_classifier_.calibrated_classifiers_[0].estimator
+    xgb_model = meta_model.final_classifier_.estimators_[0]
+    feature_importance = xgb_model.feature_importances_
     
-    if hasattr(base_xgb_model, 'feature_importances_'):
-        feature_importance = base_xgb_model.feature_importances_
-        plt.figure(figsize=(10, 7))
-        plt.barh(predictors, feature_importance)
-        plt.title('Feature Importances - Base XGBoost Model')
-        plt.xlabel('Importance')
-        plt.ylabel('Feature')
-        plt.tight_layout()
-        plt.show()
-    else:
-        print("\nWarning: Base model does not have feature_importances_ attribute")
+    plt.figure(figsize=(10, 7))
+    plt.barh(predictors, feature_importance)
+    plt.title('Feature Importances - XGBoost Model')
+    plt.xlabel('Importance')
+    plt.ylabel('Feature')
+    plt.tight_layout()
+    plt.show()
 except Exception as e:
     print(f"\nCould not plot feature importances: {str(e)}")
+
 
 test_df['pred'] = label_encoder.inverse_transform(meta_pred)
 test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
