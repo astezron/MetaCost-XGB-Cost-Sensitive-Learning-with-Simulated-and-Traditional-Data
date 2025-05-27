@@ -24,7 +24,7 @@ test_df = pd.read_csv("../Sample Dataset/Trad_TestDemo.csv")
 # ================================
 # 2. Predictors & Target
 # ================================
-predictors = ['As', 'Au', 'Cu', 'Mo', 'bn_ppm',	'cp_ppm',	'cc_ppm',	'cv_ppm',	'en_ppm',	'py_ppm',	'po_ppm',	'mb_ppm',	'ga_ppm',	'sp_ppm',	'TS_ppm']
+predictors = ['Cu', 'Au', 'Mo', 'As', 'Bn', 'Cp', 'Cc', 'Cv', 'En', 'Py', 'Pyr', 'Mol', 'Ga', 'Sph', 'TS']
 target = 'Alteration'
 
 # ================================
