@@ -15,13 +15,14 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
 from sklearn.calibration import CalibratedClassifierCV
 
+# Suppress XGBoost GPU warning
 warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
 
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv("../Sample Dataset/Simu_TrainDemo.csv")
-test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
+train_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Sample Matlab\Deco\Demo\Simu_TrainDemo.csv")
+test_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Sample Matlab\Deco\Demo\Simu_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
@@ -58,11 +59,12 @@ cost_matrix = np.array([
     [14, 12, 10, 5, 3, 0]], dtype=float)
 
 # Make cost matrix more aggressive
-cost_matrix[4, :] *= 2.0  
+cost_matrix[4, :] *= 2.0
 cost_matrix[:, 4] *= 2.0
 cost_matrix[5, :] *= 2.0
 cost_matrix[:, 5] *= 2.0
 
+# Use original cost matrix (not normalized)
 working_cost_matrix = cost_matrix.copy()
 
 # ================================
@@ -72,8 +74,7 @@ print("\nStarting Bayesian optimization using Optuna...")
 
 def objective(trial):
     params = {
-        'device': 'cuda',
-        'tree_method': 'hist',
+        'tree_method': 'hist',  
         'eval_metric': 'mlogloss',
         'random_state': 42,
         'max_depth': trial.suggest_categorical('max_depth', [8, 9, 10]),
@@ -108,8 +109,7 @@ study.optimize(objective, n_trials=5, show_progress_bar=True)
 
 best_params_tuned = study.best_params
 best_params_tuned.update({
-    'device': 'cuda',
-    'tree_method': 'hist',
+    'tree_method': 'hist',  
     'eval_metric': 'mlogloss',
     'random_state': 42
 })
@@ -148,10 +148,8 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
         cost_reduction = original_costs - new_costs  # Absolute cost reduction
         confidence = np.max(prob_matrix, axis=1)
         
-        
         print(f"Confidence stats: Min={np.min(confidence):.2f}, Mean={np.mean(confidence):.2f}, Max={np.max(confidence):.2f}")
         print(f"Cost reduction stats: Min={np.min(cost_reduction):.4f}, Mean={np.mean(cost_reduction):.4f}, Max={np.max(cost_reduction):.4f}")
-       
 
         relabel_mask = (cost_reduction > self.min_cost_reduction) & (confidence > self.confidence_threshold)
         y_transformed = np.where(relabel_mask, new_labels, y)
@@ -189,7 +187,7 @@ print("\nTraining MetaCost...")
 meta_model = OptimizedMetaCost(
     base_classifier=calibrated_base,
     confidence_threshold=0.30,
-    min_cost_reduction=0.5,  
+    min_cost_reduction=0.5,
     cv_splits=5,
     random_state=42
 )
@@ -197,32 +195,19 @@ meta_model.fit(X_train, y_train)
 
 meta_probs = meta_model.predict_proba(X_test)
 meta_pred = meta_model.predict(X_test)
-meta_conf = np.max(meta_probs, axis=1)
-expected_cost_meta = np.dot(meta_probs, working_cost_matrix)[np.arange(len(y_test)), meta_pred]
-expected_cost_base = np.dot(meta_probs, working_cost_matrix)[np.arange(len(y_test)), y_pred_baseline]
 
-override_mask = (meta_pred != y_pred_baseline) & (meta_conf > 0.75) & ((expected_cost_base - expected_cost_meta) > 0.5)
-y_pred_final = np.where(override_mask, meta_pred, y_pred_baseline)
-
-print("\nFirst 5 relabeled samples:")
-relabel_indices = np.where(meta_model.relabel_mask_)[0]
-for idx in relabel_indices[:5]:
-    orig = label_encoder.inverse_transform([meta_model.original_labels_[idx]])[0]
-    new = label_encoder.inverse_transform([meta_model.relabelled_labels_[idx]])[0]
-    print(f"Index {idx}: {orig} -> {new}")
-
-print("\nMetaCost Final Performance:")
-print("Accuracy:", accuracy_score(y_test, y_pred_final))
-print("Recall:", recall_score(y_test, y_pred_final, average='weighted'))
-print("F1 Score:", f1_score(y_test, y_pred_final, average='weighted'))
-print("Precision:", precision_score(y_test, y_pred_final, average='weighted'))
-print("Kappa:", cohen_kappa_score(y_test, y_pred_final))
+print("\nMetaCost Performance:")
+print("Accuracy:", accuracy_score(y_test, meta_pred))
+print("Recall:", recall_score(y_test, meta_pred, average='weighted'))
+print("F1 Score:", f1_score(y_test, meta_pred, average='weighted'))
+print("Precision:", precision_score(y_test, meta_pred, average='weighted'))
+print("Kappa:", cohen_kappa_score(y_test, meta_pred))
 print("ROC-AUC:", roc_auc_score(y_test, meta_probs, multi_class='ovr'))
 
 # ================================
 # 9. Visualizations & Save
 # ================================
-conf_matrix = confusion_matrix(y_test, y_pred_final)
+conf_matrix = confusion_matrix(y_test, meta_pred)
 plt.figure(figsize=(10, 7))
 sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues',
             xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_)
@@ -241,6 +226,6 @@ plt.ylabel('Feature')
 plt.tight_layout()
 plt.show()
 
-test_df['pred'] = label_encoder.inverse_transform(y_pred_final)
+test_df['pred'] = label_encoder.inverse_transform(meta_pred)
 test_df.to_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Sample Matlab\Deco\Demo\MetaCostPredictions.csv", index=False)
 print("\nMetaCost predictions saved.")
