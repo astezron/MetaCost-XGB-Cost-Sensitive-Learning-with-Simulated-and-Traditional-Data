@@ -20,17 +20,13 @@ This repository contains Python codes for analyzing simulated and traditional da
   - scikit-learn
   - xgboost
   - scipy
-## CUDA Requirements
-- NVIDIA GPU with compute capability ≥ 3.5
-- CUDA Toolkit ≥ 11.2 (Recommended: 11.8 or later for recent XGBoost versions)
-- NVIDIA drivers compatible with your CUDA version
 
 Install dependencies using:
 ```bash
 pip install numpy pandas scikit-learn xgboost scipy
 ```
 ## Demo Files Provided:
-For testing purposes, demo dataset files named Simu_TrainDemo.csv , Simu_TestDemo.csv, Trad_TrainDemo.csv and Trad_TestDemo.csv have been included (10 percent of the original dataset). These can be used to quickly run and verify the workflows.
+For testing purposes, demo dataset files named Simu_TrainDemo.csv , Simu_TestDemo.csv, Trad_TrainDemo.csv and Trad_TestDemo.csv have been included in the folder named Sample Dataset. These can be used to quickly run and verify the workflows.
 
 ## 1. Simulated Dataset Workflow
 
