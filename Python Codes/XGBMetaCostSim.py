@@ -21,8 +21,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Sample Matlab\Deco\Demo\Simu_TrainDemo.csv")
-test_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Sample Matlab\Deco\Demo\Simu_TestDemo.csv")
+train_df = pd.read_csv(r"../Sample Dataset/Simu_TrainDemo.csv")
+test_df = pd.read_csv(r"../Sample Dataset/Simu_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
