@@ -120,7 +120,7 @@ for k, v in best_params_tuned.items():
 # 7. MetaCost Class
 # ================================
 class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
-    def __init__(self, base_classifier=None, confidence_threshold=0.50, min_cost_reduction=0.5, cv_splits=10, random_state=None):
+    def __init__(self, base_classifier=None, confidence_threshold=0.30, min_cost_reduction=0.01, cv_splits=10, random_state=None):
         self.base_classifier = base_classifier if base_classifier is not None else xgb.XGBClassifier(**best_params_tuned)
         self.confidence_threshold = confidence_threshold
         self.min_cost_reduction = min_cost_reduction
