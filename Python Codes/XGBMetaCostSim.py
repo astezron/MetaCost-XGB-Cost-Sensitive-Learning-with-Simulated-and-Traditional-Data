@@ -227,5 +227,5 @@ plt.tight_layout()
 plt.show()
 
 test_df['pred'] = label_encoder.inverse_transform(meta_pred)
-test_df.to_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Sample Matlab\Deco\Demo\MetaCostPredictions.csv", index=False)
+test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
 print("\nMetaCost predictions saved.")
