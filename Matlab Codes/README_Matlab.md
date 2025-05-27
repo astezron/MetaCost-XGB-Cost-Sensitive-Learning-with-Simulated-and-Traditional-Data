@@ -12,7 +12,7 @@ This repository contains MATLAB scripts for generating geostatistical proxies fr
   2. `northing`
   3. `elevation`
   4. `alteration class` (categorical response variable) encoded as 1='AAA', 2='IAA', 3='PHY', 4='PRO', 5='PTS' and 6='UAL'
-  5-9. 15 feature variables: `Cu`, `Au`, `Mo`, `As`, `Bn`, `Cp`, `Cc`, `Cv`, `En`, `Py`, `Pyr`, `Mol`, `Ga`, `Sph`, `TS`
+  5. 15 feature variables: `Cu`, `Au`, `Mo`, `As`, `Bn`, `Cp`, `Cc`, `Cv`, `En`, `Py`, `Pyr`, `Mol`, `Ga`, `Sph`, `TS`
 
 ### `alldata.csv`
 - **Description**: Combined training and testing dataset.
