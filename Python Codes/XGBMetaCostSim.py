@@ -17,8 +17,8 @@ from sklearn.model_selection import StratifiedKFold
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Simu_Sample\Simu_TrainDemo.csv")
-test_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Simu_Sample\Simu_TestDemo.csv")
+train_df = pd.read_csv("../Sample Dataset/Simu_TrainDemo.csv")
+test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
@@ -192,9 +192,9 @@ print("ROC-AUC:", roc_auc_score(y_test, meta_probs, multi_class='ovr'))
 
 # Export predictions to CSV
 test_df['pred'] = label_encoder.inverse_transform(meta_pred)
-test_df.to_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Simu_Sample\MetaCostPredictions.csv", index=False)
+test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
 
-print("MetaCost_PredictionsMode.csv saved as output")
+print("MetaCostPredictions.csv saved as output")
 
 print("Note: MetaCostPredictions.csv will be processed by SimMode.py to calculate the mode for each 50 rows of the same datapoint, producing MetaCost_PredictionsMode.csv")
 
