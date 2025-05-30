@@ -13,18 +13,17 @@ from sklearn.metrics import (
 )
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
-from sklearn.calibration import CalibratedClassifierCV
 
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv("../Sample Dataset/Simu_TrainDemo.csv")
-test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
+train_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Simu_Sample\Simu_TrainDemo.csv")
+test_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Simu_Sample\Simu_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
 # ================================
-predictors = ['Cu', 'Au', 'Mo', 'As', 'Bn', 'Cp', 'Cc', 'Cv', 'En', 'Py', 'Pyr', 'Mol', 'Ga', 'Sph', 'TS']
+predictors = ['As', 'Au', 'Cu', 'Mo', 'Bn', 'Cp', 'Cc', 'Cv', 'En', 'Py', 'Pyr', 'Mol', 'Ga', 'Sph', 'TS']
 target = 'Alteration'
 
 # ================================
@@ -55,10 +54,10 @@ cost_matrix = np.array([
     [8, 11, 7, 6, 0, 3],
     [14, 12, 10, 5, 3, 0]], dtype=float)
 
-cost_matrix[4, :] *= 1.5
-cost_matrix[:, 4] *= 1.5
-cost_matrix[5, :] *= 1.5
-cost_matrix[:, 5] *= 1.5
+cost_matrix[4, :] *= 2.0
+cost_matrix[:, 4] *= 2.0
+cost_matrix[5, :] *= 2.0
+cost_matrix[:, 5] *= 2.0
 
 working_cost_matrix = cost_matrix.copy()
 
@@ -168,19 +167,11 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
         return self.final_classifier_.predict_proba(X)
 
 # ================================
-# 8. Train MetaCost with Calibration
+# 8. Train MetaCost
 # ================================
-print("\nCreating calibrated base classifier...")
-calibrated_base = CalibratedClassifierCV(
-    xgb.XGBClassifier(**best_params_tuned),
-    method='isotonic',
-    cv=3,
-    n_jobs=-1
-)
-
 print("\nTraining MetaCost...")
 meta_model = OptimizedMetaCost(
-    base_classifier=calibrated_base,
+    base_classifier=xgb.XGBClassifier(**best_params_tuned),
     confidence_threshold=0.30,
     min_cost_reduction=0.5,
     cv_splits=5,
@@ -190,44 +181,24 @@ meta_model.fit(X_train, y_train)
 
 meta_probs = meta_model.predict_proba(X_test)
 meta_pred = meta_model.predict(X_test)
-
+     
 print("\nMetaCost Performance:")
 print("Accuracy:", accuracy_score(y_test, meta_pred))
 print("Recall:", recall_score(y_test, meta_pred, average='weighted'))
-print("F1 Score:", f1_score(y_test, meta_pred, average='weighted', zero_division=0))
-print("Precision:", precision_score(y_test, meta_pred, average='weighted', zero_division=0))
+print("F1 Score:", f1_score(y_test, meta_pred, average='weighted'))
+print("Precision:", precision_score(y_test, meta_pred, average='weighted'))
 print("Kappa:", cohen_kappa_score(y_test, meta_pred))
 print("ROC-AUC:", roc_auc_score(y_test, meta_probs, multi_class='ovr'))
 
-# ================================
-# 9. Visualizations & Save
-# ================================
-conf_matrix = confusion_matrix(y_test, meta_pred)
-plt.figure(figsize=(10, 7))
-sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues',
-            xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_)
-plt.title('Confusion Matrix - MetaCost')
-plt.xlabel('Predicted')
-plt.ylabel('Actual')
-plt.tight_layout()
-plt.show()
-
-try:
-    xgb_model = xgb.XGBClassifier(**best_params_tuned)
-    xgb_model.fit(X_train, y_train)
-    
-    feature_importance = xgb_model.feature_importances_
-    
-    plt.figure(figsize=(10, 7))
-    plt.barh(predictors, feature_importance)
-    plt.title('Feature Importances - XGBoost Model')
-    plt.xlabel('Importance')
-    plt.ylabel('Feature')
-    plt.tight_layout()
-    plt.show()
-except Exception as e:
-    print(f"\nCould not plot feature importances: {str(e)}")
-
+# Export predictions to CSV
 test_df['pred'] = label_encoder.inverse_transform(meta_pred)
-test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
-print("\nMetaCost predictions saved.") 
+test_df.to_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Simu_Sample\MetaCostPredictions.csv", index=False)
+
+print("MetaCost_PredictionsMode.csv saved as output")
+
+print("Note: MetaCostPredictions.csv will be processed by SimMode.py to calculate the mode for each 50 rows of the same datapoint, producing MetaCost_PredictionsMode.csv")
+
+print("Note: Then SimModeMetrics.py will calculate metrics using MetaCost_PredictionsMode.csv as input") 
+
+
+
