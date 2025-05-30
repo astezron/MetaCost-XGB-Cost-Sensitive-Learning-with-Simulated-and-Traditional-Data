@@ -17,8 +17,8 @@ from sklearn.model_selection import StratifiedKFold
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Trad_Sample\Trad_TrainDemo.csv")
-test_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Trad_Sample\Trad_TestDemo.csv")
+train_df = pd.read_csv("../Sample Dataset/Trad_TrainDemo.csv")
+test_df = pd.read_csv("../Sample Dataset/Trad_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
