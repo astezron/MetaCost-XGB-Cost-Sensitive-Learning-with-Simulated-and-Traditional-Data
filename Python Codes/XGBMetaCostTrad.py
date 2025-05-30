@@ -13,18 +13,17 @@ from sklearn.metrics import (
 )
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
-from sklearn.calibration import CalibratedClassifierCV
 
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv("../Sample Dataset/Trad_TrainDemo.csv")
-test_df = pd.read_csv("../Sample Dataset/Trad_TestDemo.csv")
+train_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Trad_Sample\Trad_TrainDemo.csv")
+test_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\CodeAlt\Final_test\Trad_Sample\Trad_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
 # ================================
-predictors = ['Cu', 'Au', 'Mo', 'As', 'Bn', 'Cp', 'Cc', 'Cv', 'En', 'Py', 'Pyr', 'Mol', 'Ga', 'Sph', 'TS']
+predictors = ['As', 'Au', 'Cu', 'Mo', 'Bn', 'Cp', 'Cc', 'Cv', 'En', 'Py', 'Pyr', 'Mol', 'Ga', 'Sph', 'TS']
 target = 'Alteration'
 
 # ================================
@@ -168,19 +167,11 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
         return self.final_classifier_.predict_proba(X)
 
 # ================================
-# 8. Train MetaCost with Calibration
+# 8. Train MetaCost
 # ================================
-print("\nCreating calibrated base classifier...")
-calibrated_base = CalibratedClassifierCV(
-    xgb.XGBClassifier(**best_params_tuned),
-    method='isotonic',
-    cv=3,
-    n_jobs=-1
-)
-
 print("\nTraining MetaCost...")
 meta_model = OptimizedMetaCost(
-    base_classifier=calibrated_base,
+    base_classifier=xgb.XGBClassifier(**best_params_tuned),
     confidence_threshold=0.30,
     min_cost_reduction=0.5,
     cv_splits=5,
@@ -212,21 +203,16 @@ plt.ylabel('Actual')
 plt.tight_layout()
 plt.show()
 
-try:
-    xgb_model = xgb.XGBClassifier(**best_params_tuned)
-    xgb_model.fit(X_train, y_train)
+feature_importance = meta_model.final_classifier_.feature_importances_
     
-    feature_importance = xgb_model.feature_importances_
-    
-    plt.figure(figsize=(10, 7))
-    plt.barh(predictors, feature_importance)
-    plt.title('Feature Importances - XGBoost Model')
-    plt.xlabel('Importance')
-    plt.ylabel('Feature')
-    plt.tight_layout()
-    plt.show()
-except Exception as e:
-    print(f"\nCould not plot feature importances: {str(e)}")
+plt.figure(figsize=(10, 7))
+plt.barh(predictors, feature_importance)
+plt.title('Feature Importances - MetaCost Model')
+plt.xlabel('Importance')
+plt.ylabel('Feature')
+plt.tight_layout()
+plt.show()
+
 
 # 10. Print results
 # =====================================
