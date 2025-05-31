@@ -5,8 +5,8 @@ import numpy as np
 # Load CSV file
 df= pd.read_csv("MetaCostPredictionsMode.csv")
 
-# Ensure the dataframe has 'pred' and 'Alteration' columns
-assert 'pred' in df.columns and 'Alteration' in df.columns, "CSV must contain 'pred' and 'Alteration' columns"
+# Ensure the dataframe has 'Pred' and 'Alteration' columns
+assert 'Pred' in df.columns and 'Alteration' in df.columns, "CSV must contain 'Pred' and 'Alteration' columns"
 
 # Group by test sample index, assuming repeated simulations per test sample
 n_simulations = 50
@@ -17,7 +17,7 @@ results = []
 
 for i in range(n_test_points):
     subset = df.iloc[i * n_simulations: (i + 1) * n_simulations]
-    pred_counts = Counter(subset['pred'])
+    pred_counts = Counter(subset['Pred'])
     most_common_class, freq = pred_counts.most_common(1)[0]
     frequency = freq / n_simulations
     true_class = subset['Alteration'].iloc[0]
