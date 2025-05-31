@@ -196,6 +196,19 @@ test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
 
 print("MetaCostPredictions.csv saved as output")
 
+# ================================
+# 9. Feature Importance Visualization
+# ================================
+plt.figure(figsize=(10, 6))
+sorted_idx = np.argsort(meta_model.final_classifier_.feature_importances_)
+plt.barh(np.array(predictors)[sorted_idx], meta_model.final_classifier_.feature_importances_[sorted_idx])
+plt.title("Feature Importances - MetaCost XGBoost", fontsize=14)
+plt.xlabel("Importance Score", fontsize=12)
+plt.tight_layout()
+plt.savefig("../Sample Dataset/feature_importance.png") 
+plt.close()
+print("\nFeature importance plot saved to feature_importance.png")
+
 print("Note: MetaCostPredictions.csv will be processed by SimMode.py to calculate the mode for each 50 rows of the same datapoint, producing MetaCost_PredictionsMode.csv")
 
 print("Note: Then SimModeMetrics.py will calculate metrics using MetaCost_PredictionsMode.csv as input") 
