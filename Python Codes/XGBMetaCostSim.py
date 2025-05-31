@@ -191,7 +191,7 @@ print("Kappa:", cohen_kappa_score(y_test, meta_pred))
 print("ROC-AUC:", roc_auc_score(y_test, meta_probs, multi_class='ovr'))
 
 # Export predictions to CSV
-test_df['pred'] = label_encoder.inverse_transform(meta_pred)
+test_df['Pred'] = label_encoder.inverse_transform(meta_pred)
 test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
 
 print("MetaCostPredictions.csv saved as output")
