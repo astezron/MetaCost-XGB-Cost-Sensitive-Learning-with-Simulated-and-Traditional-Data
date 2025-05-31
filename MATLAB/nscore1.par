@@ -1,0 +1,9 @@
+                  Parameters for NSCORE
+                  *********************
+
+START OF PARAMETERS:
+training.csv                     % input file name
+5:19                             %     column(s) for data values
+-1.0 1.0e21                      % trimming limits for data values
+nscore_training.out              % output file with normal scores transforms
+3                                % number of decimals for values in the output files

@@ -1,0 +1,22 @@
+                  Parameters for SPECSIM
+                  **********************
+
+START OF PARAMETERS:
+nscore_alldata.out               % file with coordinates of locations for co-simulation
+1 2 3 4                          %        columns for location coordinates and response variable
+nscore_alldata.out               % file with conditioning data
+1 2 3                            %        columns for coordinates
+20:34                            %        columns for Gaussian data
+Cu Au Mo As Bn Cp Cc Cv En Py Pyr Mol Ga Sph TS   %        original variable names
+-10.0  10.0                      %        trimming limits for Gaussian data
+vargfit                          % basename for files with variogram models
+100 100 60                       % search neighborhood: maximum radii in the rotated system
+0 0 0                            %        angles for search ellipsoid
+0                                %        divide into octants? 1=yes, 0=no
+30                               %        optimal number of data per octant (if octant=1) or in total (if 0)
+50                               % number of realizations
+1000                             % number of turning lines
+5000                             % maximum number of locations to simulate simultaneously
+9784498                          % seed for random number generation
+proxies_alldata.csv              % name of output file
+3                                % number of decimals for values in the output file
