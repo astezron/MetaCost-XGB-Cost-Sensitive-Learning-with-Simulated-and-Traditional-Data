@@ -18,7 +18,7 @@ from sklearn.model_selection import StratifiedKFold
 # 1. Load Dataset
 # ================================
 train_df = pd.read_csv(r"../Sample Dataset/Simu_TrainDemo.csv")
-test_df = pd.read_csv("../Sample Dataset/Simu_TrainDemo.csv")
+test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
 
 # ================================
 # 2. Predictors & Target
@@ -204,9 +204,9 @@ plt.barh(np.array(predictors)[sorted_idx], meta_model.final_classifier_.feature_
 plt.title("Feature Importances - MetaCost XGBoost", fontsize=14)
 plt.xlabel("Importance Score", fontsize=12)
 plt.tight_layout()
-plt.savefig(r"C:\Users\Abhishek\Desktop\Correct Data\Sample\feature_importanceN.png") 
+plt.savefig(r"C:\Users\Abhishek\Desktop\Correct Data\Sample\feature_importance.png") 
 plt.close()
-print("\nFeature importance plot saved to feature_importanceTS.png")
+print("\nFeature importance plot saved to feature_importance.png")
 
 print("Note: MetaCostPredictions.csv will be processed by SimMode.py to calculate the mode for each 50 rows of the same datapoint, producing MetaCost_PredictionsMode.csv")
 
