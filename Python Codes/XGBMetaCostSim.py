@@ -17,13 +17,13 @@ from sklearn.model_selection import StratifiedKFold
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv("../Sample Dataset/Simu_TrainDemo.csv")
-test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
+train_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\Correct Data\Sample\trainsimN.csv")
+test_df = pd.read_csv(r"C:\Users\Abhishek\Desktop\Correct Data\Sample\testsimN.csv")
 
 # ================================
 # 2. Predictors & Target
 # ================================
-predictors = ['As', 'Au', 'Cu', 'Mo', 'Bn', 'Cp', 'Cc', 'Cv', 'En', 'Py', 'Pyr', 'Mol', 'Ga', 'Sph', 'TS']
+predictors = ['As', 'Au', 'Cu', 'Mo', 'Cp', 'Py','TS']
 target = 'Alteration'
 
 # ================================
@@ -54,10 +54,10 @@ cost_matrix = np.array([
     [8, 11, 7, 6, 0, 3],
     [14, 12, 10, 5, 3, 0]], dtype=float)
 
-cost_matrix[4, :] *= 2.0
-cost_matrix[:, 4] *= 2.0
-cost_matrix[5, :] *= 2.0
-cost_matrix[:, 5] *= 2.0
+cost_matrix[4, :] *= 1.5
+cost_matrix[:, 4] *= 1.5
+cost_matrix[5, :] *= 1.5
+cost_matrix[:, 5] *= 1.5
 
 working_cost_matrix = cost_matrix.copy()
 
@@ -84,7 +84,7 @@ def objective(trial):
 
     model = xgb.XGBClassifier(**params)
     weights = np.array([class_weights[y] for y in y_train])
-    cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     scores = []
 
     for train_idx, val_idx in cv.split(X_train, y_train):
@@ -99,24 +99,24 @@ def objective(trial):
     return np.mean(scores)
 
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=5, show_progress_bar=True)
+study.optimize(objective, n_trials=1, show_progress_bar=True)
 
 best_params_tuned = study.best_params
 best_params_tuned.update({
-    'tree_method': 'hist',  
+    'tree_method': 'auto',  
     'eval_metric': 'mlogloss',
     'random_state': 42
 })
 
 print("\nBest parameters found:")
 for k, v in best_params_tuned.items():
-    print(f"{k}: {v}")
-
+    print(f"{k}: {v}") 
+    
 # ================================
 # 7. MetaCost Class
 # ================================
 class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
-    def __init__(self, base_classifier=None, confidence_threshold=0.30, min_cost_reduction=0.001, cv_splits=5, random_state=None):
+    def __init__(self, base_classifier=None, confidence_threshold=0.70, min_cost_reduction=0.02, cv_splits=5, random_state=None):
         self.base_classifier = base_classifier if base_classifier is not None else xgb.XGBClassifier(**best_params_tuned)
         self.confidence_threshold = confidence_threshold
         self.min_cost_reduction = min_cost_reduction
@@ -172,8 +172,8 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
 print("\nTraining MetaCost...")
 meta_model = OptimizedMetaCost(
     base_classifier=xgb.XGBClassifier(**best_params_tuned),
-    confidence_threshold=0.30,
-    min_cost_reduction=0.5,
+    confidence_threshold=0.70,
+    min_cost_reduction=0.02,
     cv_splits=5,
     random_state=42
 )
@@ -192,11 +192,10 @@ print("ROC-AUC:", roc_auc_score(y_test, meta_probs, multi_class='ovr'))
 
 # Export predictions to CSV
 test_df['Pred'] = label_encoder.inverse_transform(meta_pred)
-test_df.to_csv("../Sample Dataset/MetaCostPredictions.csv", index=False)
+test_df.to_csv(r"C:\Users\Abhishek\Desktop\Correct Data\Sample\MetaCostPredictions.csv", index=False)
 
-print("MetaCostPredictions.csv saved as output")
+print("MetaCost_PredictionsMode.csv saved as output")
 
-# ================================
 # 9. Feature Importance Visualization
 # ================================
 plt.figure(figsize=(10, 6))
@@ -205,9 +204,9 @@ plt.barh(np.array(predictors)[sorted_idx], meta_model.final_classifier_.feature_
 plt.title("Feature Importances - MetaCost XGBoost", fontsize=14)
 plt.xlabel("Importance Score", fontsize=12)
 plt.tight_layout()
-plt.savefig("../Sample Dataset/feature_importance.png") 
+plt.savefig(r"C:\Users\Abhishek\Desktop\Correct Data\Sample\feature_importanceN.png") 
 plt.close()
-print("\nFeature importance plot saved to feature_importance.png")
+print("\nFeature importance plot saved to feature_importanceTS.png")
 
 print("Note: MetaCostPredictions.csv will be processed by SimMode.py to calculate the mode for each 50 rows of the same datapoint, producing MetaCost_PredictionsMode.csv")
 
