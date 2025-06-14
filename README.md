@@ -1,6 +1,6 @@
 # MATLAB-based geostatistical simulations and MetaCost-XGB: Cost-Sensitive Learning with Simulated and Traditional Data
 
-This repository contains a complete workflow for applying the MetaCost algorithm to both simulated and traditional datasets(uploaded on Zenodo). The pipeline includes MATLAB-based geostatistical simulations and Python-based machine learning codes.
+This repository contains a complete workflow for applying the MetaCost algorithm to both simulated and traditional datasets(uploaded on Zenodo). The pipeline includes MATLAB codes for proxy generation and Python-based machine learning codes.
 
 ---
 
