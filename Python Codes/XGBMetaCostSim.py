@@ -17,8 +17,8 @@ from sklearn.model_selection import StratifiedKFold
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv(r"../Sample Dataset/Simu_TrainDemo.csv")
-test_df = pd.read_csv("../Sample Dataset/Simu_TestDemo.csv")
+train_df = pd.read_csv(r"../Zenodo/Simu_Train.csv")
+test_df = pd.read_csv(r"../Zenodo/Simu_Test.csv")
 
 # ================================
 # 2. Predictors & Target
@@ -99,11 +99,11 @@ def objective(trial):
     return np.mean(scores)
 
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=1, show_progress_bar=True)
+study.optimize(objective, n_trials=10, show_progress_bar=True)
 
 best_params_tuned = study.best_params
 best_params_tuned.update({
-    'tree_method': 'auto',  
+    'tree_method': 'hist',  
     'eval_metric': 'mlogloss',
     'random_state': 42
 })
@@ -192,7 +192,7 @@ print("ROC-AUC:", roc_auc_score(y_test, meta_probs, multi_class='ovr'))
 
 # Export predictions to CSV
 test_df['Pred'] = label_encoder.inverse_transform(meta_pred)
-test_df.to_csv(r"../Sample Dataset/MetaCostPredictions.csv", index=False)
+test_df.to_csv(r"/MetaCostPredictions.csv", index=False)
 
 print("MetaCost_PredictionsMode.csv saved as output")
 
@@ -204,7 +204,7 @@ plt.barh(np.array(predictors)[sorted_idx], meta_model.final_classifier_.feature_
 plt.title("Feature Importances - MetaCost XGBoost", fontsize=14)
 plt.xlabel("Importance Score", fontsize=12)
 plt.tight_layout()
-plt.savefig(r"C:\Users\Abhishek\Desktop\Correct Data\Sample\feature_importance.png") 
+plt.savefig(r"/feature_importance.png") 
 plt.close()
 print("\nFeature importance plot saved to feature_importance.png")
 
