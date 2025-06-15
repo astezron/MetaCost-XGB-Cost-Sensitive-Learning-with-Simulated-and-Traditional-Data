@@ -78,6 +78,7 @@ Run the following script to train a MetaCost-enhanced XGBoost model on simulated
 ```bash
 python XGBMetaCostSim.py
 ```
+- Input: Simu_Train.csv and Simu_Test.csv
 - Output: `MetaCostPredictions.csv`
 
 ### Step 2: Compute Mode for Simulated Predictions
@@ -104,7 +105,7 @@ Run the MetaCost-enhanced model on traditional datasets:
 ```bash
 python XGBMetaCostTrad.py
 ```
-- Input: Hardcoded training and testing sets  
+- Input: Trad_Train.csv and Trad_Test.csv   
 - Output: Predictions and evaluation metrics printed or saved as specified
 
 ---
@@ -124,7 +125,7 @@ Estimate prediction confidence using bootstrapped replicates:
 ```bash
 python Bootstrapping.py
 ```
-- Input: Hardcoded datasets  
+- Input: Trad_Train.csv and Trad_Test.csv  
 - Output: Bootstrapped predictions with confidence scores
 
 ---
