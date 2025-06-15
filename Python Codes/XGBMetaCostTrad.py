@@ -17,13 +17,13 @@ from sklearn.model_selection import StratifiedKFold
 # ================================
 # 1. Load Dataset
 # ================================
-train_df = pd.read_csv("../Sample Dataset/Trad_TrainDemo.csv")
-test_df = pd.read_csv("../Sample Dataset/Trad_TestDemo.csv")
+train_df = pd.read_csv(r"Zenodo\Trad_Train.csv")
+test_df = pd.read_csv(r"Zenodo\Trad_Test.csv")
 
 # ================================
 # 2. Predictors & Target
 # ================================
-predictors = ['As', 'Au', 'Cu', 'Mo', 'Bn', 'Cp', 'Cc', 'Cv', 'En', 'Py', 'Pyr', 'Mol', 'Ga', 'Sph', 'TS']
+predictors = ['As', 'Au', 'Cu', 'Mo', 'Cp', 'Py','TS']
 target = 'Alteration'
 
 # ================================
@@ -54,10 +54,10 @@ cost_matrix = np.array([
     [8, 11, 7, 6, 0, 3],
     [14, 12, 10, 5, 3, 0]], dtype=float)
 
-cost_matrix[4, :] *= 2.0
-cost_matrix[:, 4] *= 2.0
-cost_matrix[5, :] *= 2.0
-cost_matrix[:, 5] *= 2.0
+cost_matrix[4, :] *= 1.5
+cost_matrix[:, 4] *= 1.5
+cost_matrix[5, :] *= 1.5
+cost_matrix[:, 5] *= 1.5
 
 working_cost_matrix = cost_matrix.copy()
 
@@ -84,7 +84,7 @@ def objective(trial):
 
     model = xgb.XGBClassifier(**params)
     weights = np.array([class_weights[y] for y in y_train])
-    cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     scores = []
 
     for train_idx, val_idx in cv.split(X_train, y_train):
@@ -99,7 +99,7 @@ def objective(trial):
     return np.mean(scores)
 
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=5, show_progress_bar=True)
+study.optimize(objective, n_trials=10, show_progress_bar=True)
 
 best_params_tuned = study.best_params
 best_params_tuned.update({
@@ -116,7 +116,7 @@ for k, v in best_params_tuned.items():
 # 7. MetaCost Class
 # ================================
 class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
-    def __init__(self, base_classifier=None, confidence_threshold=0.30, min_cost_reduction=0.001, cv_splits=5, random_state=None):
+    def __init__(self, base_classifier=None, confidence_threshold=0.70, min_cost_reduction=0.02, cv_splits=5, random_state=None):
         self.base_classifier = base_classifier if base_classifier is not None else xgb.XGBClassifier(**best_params_tuned)
         self.confidence_threshold = confidence_threshold
         self.min_cost_reduction = min_cost_reduction
@@ -172,8 +172,8 @@ class OptimizedMetaCost(BaseEstimator, ClassifierMixin):
 print("\nTraining MetaCost...")
 meta_model = OptimizedMetaCost(
     base_classifier=xgb.XGBClassifier(**best_params_tuned),
-    confidence_threshold=0.30,
-    min_cost_reduction=0.5,
+    confidence_threshold=0.70,
+    min_cost_reduction=0.02,
     cv_splits=5,
     random_state=42
 )
@@ -253,15 +253,10 @@ for i, label in enumerate(class_labels):
     print(f"Class {label}: Precision: {precision_vals[i]:.6f}, Recall: {recall_vals[i]:.6f}, F-Measure: {f_measure_vals[i]:.6f}, Specificity: {specificity_vals[i]:.6f}")
 
 # Display overall metrics
-overall_precision = precision_score(y_test, meta_pred, average="macro")
 overall_recall = recall_score(y_test, meta_pred, average="macro")
-overall_f_measure = f1_score(y_test, meta_pred, average="macro")
 overall_specificity = np.mean(specificity_vals)
 overall_sensitivity = overall_recall
 
 print("\n=== Overall Metrics ===")
-print(f"Overall Precision: {overall_precision:.2f}")
-print(f"Overall Recall: {overall_recall:.2f}")
-print(f"Overall F-Measure: {overall_f_measure:.2f}")
 print(f"Overall Specificity: {overall_specificity:.2f}")
 print(f"Overall Sensitivity: {overall_sensitivity:.2f}")
