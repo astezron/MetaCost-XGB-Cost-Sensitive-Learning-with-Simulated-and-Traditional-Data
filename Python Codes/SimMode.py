@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Set the path for your CSV file
-file_path = "../Sample Dataset/MetaCost_Predictions.csv"
+file_path = "MetaCost_Predictions.csv"
 # Read the CSV file
 data = pd.read_csv(file_path)
 
@@ -27,12 +27,12 @@ for i in range(0, len(data), 50):
     data.loc[i, 'ModePred'] = mode_value
 
 # Save the updated DataFrame back to a new CSV file
-output_file_path = "../Sample Dataset/MetaCost_PredictionsMode.csv" # Path for the updated file
+output_file_path = "MetaCost_PredictionsMode.csv"
 data.to_csv(output_file_path, index=False)
 
 # Prepare data for plotting
 data_summary = data.groupby(data.index // 50)['ModePred'].first().reset_index()
-data_summary['group'] = data_summary['index'] + 1  # Create a group column for plotting
+data_summary['group'] = data_summary['index'] + 1  
 
 # Filter out rows where ModePred is an empty string for the plot
 data_summary = data_summary[data_summary['ModePred'] != ""]
@@ -49,6 +49,6 @@ plt.xticks(rotation=45)
 plt.grid(True, linestyle='--', alpha=0.7)
 plt.tight_layout()
 
-# Save the plot as a PNG file
-plt.savefig("../Sample Dataset/MetaCost_PredictionsMode.jpg")  # Save plot as PNG
-plt.close()  # Close the plot to avoid displaying it in some environments
+# Save the plot 
+plt.savefig("MetaCost_PredictionsMode.jpg") 
+plt.close()  
