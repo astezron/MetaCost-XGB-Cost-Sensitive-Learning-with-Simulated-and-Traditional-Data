@@ -9,7 +9,7 @@ This repository contains a complete workflow for applying the MetaCost algorithm
 ```bash
 MATLAB-based geostatistical simulations and MetaCost-XGB-Cost-Sensitive-Learning-with-Simulated-and-Traditional-Data/
 │
-├── Matlab Codes/              # MATLAB scripts for data simulation and proxy generation
+├── MATLAB Codes/              # MATLAB scripts for data simulation and proxy generation
 │   └── README_Matlab.md       # Instructions for running the MATLAB portion
 │
 ├── Python Codes/              # Python scripts for training, predictions, and metrics
@@ -28,7 +28,7 @@ This project is built on a **two-phase workflow**:
 ### 1. **MATLAB Phase**
 - Generates synthetic proxy datasets based on geostatistical simulation.
 - Produces `proxies_alldata.csv`
-- See [Matlab Codes/README_Matlab.md](Matlab%20Codes/README_Matlab.md) for detailed steps.
+- See [MATLAB Codes/README_Matlab.md](MATLAB%20Codes/README_Matlab.md) for detailed steps.
   
 
 ### 2. **Python Phase**
