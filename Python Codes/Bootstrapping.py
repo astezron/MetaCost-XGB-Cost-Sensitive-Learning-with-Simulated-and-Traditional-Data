@@ -7,13 +7,12 @@ from collections import Counter
 from sklearn.preprocessing import LabelEncoder
 
 # Define predictors and target
-predictors = ['As', 'Au', 'Cu', 'Mo', 'bn_ppm', 'cp_ppm', 'cc_ppm', 'cv_ppm',
-              'en_ppm', 'py_ppm', 'po_ppm', 'mb_ppm', 'ga_ppm', 'sp_ppm', 'TS_ppm']
+predictors = ['As', 'Au', 'Cu', 'Mo', 'Cp', 'Py','TS']
 target = 'Alteration'
 
 # Load data
-train_df = pd.read_csv("Trad_Train_Demo.csv")
-test_df = pd.read_csv(r"Trad_Test_Demo.csv")
+train_df = pd.read_csv("Zenodo/Trad_Train.csv")
+test_df = pd.read_csv(r"Zenodo/Trad_Test.csv")
 
 X_train = train_df[predictors]
 X_test = test_df[predictors]
@@ -97,5 +96,5 @@ true_classes = le.inverse_transform(y_test)
 results_df = pd.DataFrame(final_results, columns=["Predicted_Class", "Confidence_Probability"])
 results_df["True_Class"] = true_classes
 
-results_df.to_csv("bootstrap_prediction_uncertaintyNew.csv", index=False)
+results_df.to_csv("bootstrap_prediction_uncertainty.csv", index=False)
 print(results_df.head())
